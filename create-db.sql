@@ -5,7 +5,7 @@
 
 -- Schema from CONTRACT.md
 
-CREATE TABLE carreras (
+CREATE TABLE IF NOT EXISTS carreras (
   id SERIAL PRIMARY KEY,
   nombre VARCHAR(150) NOT NULL,
   clave VARCHAR(20) UNIQUE NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE carreras (
   activo BOOLEAN NOT NULL DEFAULT true
 );
 
-CREATE TABLE salones (
+CREATE TABLE IF NOT EXISTS salones (
   id SERIAL PRIMARY KEY,
   nombre VARCHAR(50) NOT NULL,
   edificio VARCHAR(50),
@@ -21,7 +21,7 @@ CREATE TABLE salones (
   activo BOOLEAN NOT NULL DEFAULT true
 );
 
-CREATE TABLE maestros (
+CREATE TABLE IF NOT EXISTS maestros (
   id SERIAL PRIMARY KEY,
   nombre VARCHAR(100) NOT NULL,
   apellido VARCHAR(100) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE maestros (
   activo BOOLEAN NOT NULL DEFAULT true
 );
 
-CREATE TABLE alumnos (
+CREATE TABLE IF NOT EXISTS alumnos (
   id SERIAL PRIMARY KEY,
   nombre VARCHAR(100) NOT NULL,
   apellido VARCHAR(100) NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE alumnos (
   activo BOOLEAN NOT NULL DEFAULT true
 );
 
-CREATE TABLE materias (
+CREATE TABLE IF NOT EXISTS materias (
   id SERIAL PRIMARY KEY,
   nombre VARCHAR(150) NOT NULL,
   clave VARCHAR(20) UNIQUE NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE materias (
   activo BOOLEAN NOT NULL DEFAULT true
 );
 
-CREATE TABLE grupos (
+CREATE TABLE IF NOT EXISTS grupos (
   id SERIAL PRIMARY KEY,
   materia_id INT NOT NULL REFERENCES materias(id),
   salon_id INT NOT NULL REFERENCES salones(id),
@@ -58,7 +58,7 @@ CREATE TABLE grupos (
   activo BOOLEAN NOT NULL DEFAULT true
 );
 
-CREATE TABLE grupo_maestros (
+CREATE TABLE IF NOT EXISTS grupo_maestros (
   id SERIAL PRIMARY KEY,
   grupo_id INT NOT NULL REFERENCES grupos(id),
   maestro_id INT NOT NULL REFERENCES maestros(id),
@@ -67,7 +67,7 @@ CREATE TABLE grupo_maestros (
   UNIQUE(grupo_id, maestro_id)
 );
 
-CREATE TABLE inscripciones (
+CREATE TABLE IF NOT EXISTS inscripciones (
   id SERIAL PRIMARY KEY,
   alumno_id INT NOT NULL REFERENCES alumnos(id),
   grupo_id INT NOT NULL REFERENCES grupos(id),
