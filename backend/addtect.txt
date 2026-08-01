@@ -1,0 +1,12 @@
+INSERT INTO maestros (nombre, apellido, email, telefono, password_hash, activo) VALUES
+  ('Admin',   'Sistema',   'admin@test.com',   '555-0100', '$2b$10$s7UQ73LDESAXW4hC0lnwy.sd4uztZiM/IcxQZm65HSifi9HaoXW06', true),
+  ('Roberto', 'Flores',    'roberto@test.com', '555-0101', '$2b$10$G7wT5VhMXStnVb3SdCXnuuUMvzeDHR.vcKSZqfmMJkoGObN9RdoQ.', true),
+  ('María',   'García',    'maria@test.com',   '555-0102', '$2b$10$sFiwn.oUJG/At.xCR67me.5/JGWRr409D1Og3bnJArTb68F1mf4uu', true),
+  ('Carlos',  'López',     'carlos@test.com',  '555-0103', '$2b$10$SJ5ViS7gwdCF9VuUvHv.VOzZELJV2o3nGJ9lgeyfNUI4WwMz10FdC', true),
+  ('Ana',     'Hernández', 'ana@test.com',     '555-0104', '$2b$10$m6wlKyOqOIuOUvdg8YK/e.I1v8IZ/tRAVeXvoiy.NFB6DdYIRvY5m', true)
+ON CONFLICT (email) DO UPDATE SET
+  nombre = EXCLUDED.nombre,
+  apellido = EXCLUDED.apellido,
+  telefono = EXCLUDED.telefono,
+  password_hash = EXCLUDED.password_hash,
+  activo = true;
