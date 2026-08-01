@@ -1,0 +1,110 @@
+-- =====================================================================
+-- DATOS FICTICIOS COMPLETOS — CONTROL ESCOLAR (MÉRIDA, YUCATÁN)
+-- =====================================================================
+-- Uso: copia/pega este archivo en psql, pgAdmin o DBeaver y ejecuta.
+-- Incluye TODAS las tablas con IDs explícitos para que las relaciones
+-- funcionen (grupos -> materias/salones, inscripciones -> alumnos/grupos).
+--
+-- El admin tiene prefijo "mid" (Mérida): midadmin@merida.edu.mx / admin123
+-- Los demás usuarios entran con pass123.
+--
+-- Es idempotente: si los IDs ya existen, no los duplica.
+-- =====================================================================
+
+-- ---------------------------------------------------------------------
+-- CREDENCIALES DE LOGIN
+-- ---------------------------------------------------------------------
+--   ADMIN  -> midadmin@merida.edu.mx / admin123
+--   USER   -> lfernandez@merida.edu.mx / pass123
+--   USER   -> mgonzalez@merida.edu.mx  / pass123
+--   USER   -> cibarra@merida.edu.mx    / pass123
+--   USER   -> atorres@merida.edu.mx    / pass123
+--   USER   -> rsalazar@merida.edu.mx   / pass123
+-- ---------------------------------------------------------------------
+
+-- 1. CARRERAS ---------------------------------------------------------
+INSERT INTO carreras (id, nombre, clave, duracion_semestres, activo) VALUES
+  (1, 'Ingeniería en Mecatrónica',                 'MECA', 8, true),
+  (2, 'Ingeniería en Sistemas Computacionales',    'SISC', 8, true),
+  (3, 'Licenciatura en Administración',            'LADM', 6, true)
+ON CONFLICT (id) DO NOTHING;
+
+-- 2. SALONES ----------------------------------------------------------
+INSERT INTO salones (id, nombre, edificio, capacidad, activo) VALUES
+  (1, 'A-101', 'Edificio A', 40, true),
+  (2, 'A-102', 'Edificio A', 35, true),
+  (3, 'B-201', 'Edificio B', 45, true),
+  (4, 'C-305', 'Edificio C', 30, true)
+ON CONFLICT (id) DO NOTHING;
+
+-- 3. MAESTROS (usuarios con login) -----------------------------------
+INSERT INTO maestros (id, nombre, apellido, email, telefono, password_hash, activo) VALUES
+  (1, 'Mario',   'Iñiguez Domínguez', 'midadmin@merida.edu.mx',  '999-100-0001', '$2b$10$ujy9UVdWV6MogvV4jJ72fuY8sbWbQKASel4SMwlmLxNJ6VD.SUvEe', true),
+  (2, 'Luis',    'Fernández Canto',   'lfernandez@merida.edu.mx', '999-100-0002', '$2b$10$vWrCjr/kp6rBE3Wot0CvZuUkQnBcDw/wxQ0gsjlPTPSult7gSvZCy', true),
+  (3, 'María',   'González Pacheco',  'mgonzalez@merida.edu.mx',  '999-100-0003', '$2b$10$vWrCjr/kp6rBE3Wot0CvZuUkQnBcDw/wxQ0gsjlPTPSult7gSvZCy', true),
+  (4, 'Carlos',  'Ibarra Sosa',       'cibarra@merida.edu.mx',    '999-100-0004', '$2b$10$vWrCjr/kp6rBE3Wot0CvZuUkQnBcDw/wxQ0gsjlPTPSult7gSvZCy', true),
+  (5, 'Ana',     'Torres May',        'atorres@merida.edu.mx',    '999-100-0005', '$2b$10$vWrCjr/kp6rBE3Wot0CvZuUkQnBcDw/wxQ0gsjlPTPSult7gSvZCy', true),
+  (6, 'Rodrigo', 'Salazar Pech',      'rsalazar@merida.edu.mx',   '999-100-0006', '$2b$10$vWrCjr/kp6rBE3Wot0CvZuUkQnBcDw/wxQ0gsjlPTPSult7gSvZCy', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- 4. ALUMNOS ----------------------------------------------------------
+INSERT INTO alumnos (id, nombre, apellido, matricula, carrera_id, salon_id, fecha_nacimiento, activo) VALUES
+  (1, 'Diego',    'Cervera Huchim',  'MER001', 1, 1, '2004-02-14', true),
+  (2, 'Valeria',  'Poot Chi',        'MER002', 1, 1, '2004-07-03', true),
+  (3, 'Emiliano', 'Ucán Cauich',     'MER003', 2, 2, '2003-11-25', true),
+  (4, 'Regina',   'Canul Balam',     'MER004', 2, 2, '2004-05-19', true),
+  (5, 'Santiago', 'Cetzal Hau',      'MER005', 2, 3, '2003-09-08', true),
+  (6, 'Ximena',   'Tzab Chablé',     'MER006', 3, 4, '2004-01-30', true),
+  (7, 'Mateo',    'Ek Poot',         'MER007', 3, 4, '2004-12-12', true),
+  (8, 'Camila',   'Hau Yah',         'MER008', 1, 3, '2005-03-22', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- 5. MATERIAS ---------------------------------------------------------
+INSERT INTO materias (id, nombre, clave, carrera_id, activo) VALUES
+  (1, 'Cálculo I',                 'CAL1', 1, true),
+  (2, 'Programación Web',          'PRWE', 2, true),
+  (3, 'Física Mecánica',           'FIME', 1, true),
+  (4, 'Contabilidad General',      'CONT', 3, true),
+  (5, 'Estructuras de Datos',      'ESDA', 2, true)
+ON CONFLICT (id) DO NOTHING;
+
+-- 6. GRUPOS -----------------------------------------------------------
+INSERT INTO grupos (id, materia_id, salon_id, ciclo_escolar, activo) VALUES
+  (1, 1, 1, '2026-1', true),
+  (2, 2, 2, '2026-1', true),
+  (3, 3, 3, '2026-1', true),
+  (4, 4, 4, '2026-1', true),
+  (5, 5, 2, '2026-1', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- 7. GRUPO_MAESTROS (asignación de maestros a grupos) ----------------
+INSERT INTO grupo_maestros (id, grupo_id, maestro_id, rol, activo) VALUES
+  (1, 1, 2, 'titular',  true),
+  (2, 2, 3, 'titular',  true),
+  (3, 2, 4, 'auxiliar', true),
+  (4, 3, 5, 'titular',  true),
+  (5, 4, 6, 'titular',  true),
+  (6, 5, 3, 'titular',  true)
+ON CONFLICT (id) DO NOTHING;
+
+-- 8. INSCRIPCIONES (alumnos en grupos) -------------------------------
+INSERT INTO inscripciones (id, alumno_id, grupo_id, fecha_inscripcion, activo) VALUES
+  (1, 1, 1, '2026-01-10', true),
+  (2, 2, 1, '2026-01-10', true),
+  (3, 8, 1, '2026-01-11', true),
+  (4, 3, 2, '2026-01-10', true),
+  (5, 4, 2, '2026-01-10', true),
+  (6, 5, 2, '2026-01-12', true),
+  (7, 1, 3, '2026-01-10', true),
+  (8, 2, 3, '2026-01-11', true),
+  (9, 6, 4, '2026-01-10', true),
+  (10, 7, 4, '2026-01-10', true),
+  (11, 5, 5, '2026-01-12', true),
+  (12, 4, 5, '2026-01-13', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- =====================================================================
+-- FIN. Resumen:
+--   3 carreras, 4 salones, 6 maestros (1 admin), 8 alumnos,
+--   5 materias, 5 grupos, 6 asignaciones, 12 inscripciones.
+-- =====================================================================
