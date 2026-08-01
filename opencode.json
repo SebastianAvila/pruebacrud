@@ -1,0 +1,44 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "@playwright/mcp@latest"],
+      "enabled": true
+    }
+  },
+  "agent": {
+    "architect": {
+      "model": "opencode/nemotron-3-ultra-free",
+      "prompt": "{file:./agentes/architect.md}"
+    },
+    "orchestrator": {
+      "model": "opencode/big-pickle",
+      "prompt": "{file:./agentes/orchestrator.md}"
+    },
+    "backend-coder": {
+      "model": "opencode/big-pickle",
+      "prompt": "{file:./agentes/back/backend_coder.md}"
+    },
+    "backend-debugger": {
+      "model": "opencode/north-mini-code-free",
+      "prompt": "{file:./agentes/back/backend_debugger.md}"
+    },
+    "backend-reviewer": {
+      "model": "opencode/deepseek-v4-flash-free",
+      "prompt": "{file:./agentes/back/backend_reviewer.md}"
+    },
+    "frontend-coder": {
+      "model": "opencode/big-pickle",
+      "prompt": "{file:./agentes/front/frontend_coder.md}"
+    },
+    "frontend-debugger": {
+      "model": "opencode/north-mini-code-free",
+      "prompt": "{file:./agentes/front/frontend_debugger.md}"
+    },
+    "frontend-reviewer": {
+      "model": "opencode/ling-3.0-flash-free",
+      "prompt": "{file:./agentes/front/frontend_reviewer.md}"
+    }
+  }
+}
