@@ -243,3 +243,46 @@ curl http://localhost:4000/api/health
 - Probar todos los endpoints uno por uno
 - Crear datos de prueba (carreras, salones, materias, alumnos, grupos)
 - Probar inscripciones y sub-rutas de grupos
+
+---
+
+## SESIÓN 2026-08-01 — Inyección de datos en OTRA LAPTOP
+
+**Contexto:** El proyecto se está moviendo a **otra laptop**. En la laptop la BD local **no tiene los usuarios**, por lo que el login devolvía `401 Unauthorized` en el frontend (aunque en la máquina de desarrollo todo funcionaba). Esta sesión se documenta con el contexto de que la inyección se hizo/ejecutará **en la laptop, no en esta máquina**.
+
+### Causa raíz del 401 en la laptop
+- Los `.env` están en `.gitignore` (`backend/.env`, `frontend/.env.local`), así que al copiar el proyecto **no se copian**. Si faltan, el backend no conecta o apunta a otra BD.
+- La BD local de la laptop existía pero **sin usuarios de login** (o con hashes incorrectos).
+
+### Archivos creados en esta sesión (para la laptop)
+
+| Archivo | Uso |
+|---------|-----|
+| `backend/setup.js` | Setup de 1 comando: crea BD + tablas + inyecta usuarios. Correr: `node setup.js` |
+| `backend/seed_users.js` | Solo inyecta/actualiza usuarios de login (idempotente). Correr: `node seed_users.js` |
+| `usuarios-ficticios.sql` | Solo los usuarios de login en SQL listo para pegar/inyectar manualmente |
+| `datos-ficticios.txt` | **TODAS las tablas** con datos falsos (carreras, salones, maestros, alumnos, materias, grupos, grupo_maestros, inscripciones) listo para pegar en psql/pgAdmin/DBeaver |
+
+Además se modificó `create-db.sql`: las tablas ahora usan `CREATE TABLE IF NOT EXISTS` para que sea idempotente.
+
+### Pasos en la laptop
+1. Verificar/corregir `backend/.env` (contraseña real de postgres de la laptop):
+   `DATABASE_URL=postgres://postgres:<password_real>@localhost:5432/control_escolar`
+2. `cd backend && npm install`
+3. Crear tablas: `create-db.sql` (o `node setup.js` que lo hace todo)
+4. Inyectar datos: pegar `datos-ficticios.txt` en psql/pgAdmin, o `node seed_users.js` / `node setup.js`
+5. Arrancar: `npm run dev` → login en `http://localhost:3000/login`
+
+### Credenciales de login (admin prefijo "mid" de Mérida)
+| Email | Password | Rol |
+|-------|----------|-----|
+| `midadmin@merida.edu.mx` | `admin123` | admin |
+| `lfernandez@merida.edu.mx` | `pass123` | usuario |
+| `mgonzalez@merida.edu.mx` | `pass123` | usuario |
+| `cibarra@merida.edu.mx` | `pass123` | usuario |
+| `atorres@merida.edu.mx` | `pass123` | usuario |
+| `rsalazar@merida.edu.mx` | `pass123` | usuario |
+
+### Notas técnicas
+- Los hashes de bcrypt **no se deben escribir a mano**: PowerShell interpreta los `$` del hash como variables y los borra. Siempre generar el hash con Node (`bcrypt.hash`) y copiarlo tal cual.
+- `datos-ficticios.txt` fue validado de corrido contra una BD limpia de prueba (todos los INSERT OK y relaciones verificadas con JOIN).
